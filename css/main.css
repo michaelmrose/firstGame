@@ -9,6 +9,13 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: "#fff";
+}
+div#around {
+    border-style: solid;
+    border-color: black;
+    border-width: 0.2vmin;
+    padding: 2vmin;
 }
 header {
     font-size: 5vmin;
@@ -55,12 +62,12 @@ h1 {
     border-color: darkgrey;
 }
 #controls {
+    width: 20vmin;
     padding: 1vmin;
 }
 #controls > button {
     padding: 2vmin;
     font-size: 2vmin;
-    /* color: black; */
     border-radius: 4vmin;
     border: 0.1vmin solid grey;
 }

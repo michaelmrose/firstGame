@@ -5,20 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
         <script defer src="js/main.js"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="stylesheet" href="css/main.css" />
     </head>
     <body>
         <header>CONNECT FOUR</header>
-        <h1>PURPLE's TURN</h1>
+        <h1 id="message">PURPLE's TURN</h1>
         <section id="markers">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div id="0"></div>
+            <div id="1"></div>
+            <div id="2"></div>
+            <div id="3"></div>
+            <div id="4"></div>
+            <div id="5"></div>
+            <div id="6"></div>
         </section>
         <section id="board">
             <div id="c0r5"></div>
@@ -70,8 +69,8 @@
             <div id="c6r0"></div>
         </section>
         <div id="controls">
-            <button>play</button>
-            <button>reset</button>
+            <!-- <button id="play_button">play</button> -->
+            <button id="reset_button">Play Again</button>
         </div>
     </body>
 </html>
