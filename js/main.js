@@ -5,8 +5,6 @@ let board;
 let winner;
 let currentPlayer;
 let players;
-let numberOfRows;
-let numberOfColumns;
 /*----- cached elements  -----*/
 
 /*----- event listeners -----*/
@@ -32,9 +30,42 @@ function valueToColor(n) {
     else return players.filter((x) => x.boardValue == n)[0].color;
 }
 
-function evaluateRound() {
+function positionInBounds(pos) {
+    return (
+        pos.y >= 0 &&
+        pos.y < board[0].length &&
+        pos.x >= 0 &&
+        pos.x < board.length
+    );
+}
+
+function addCords(obA, obB) {
+    return { x: obA.x + obB.x, y: obA.y + obB.y };
+}
+
+function check(pos, direction, desired, matches) {
+    if (typeof matches === "undefined") matches = 1;
+    if (typeof desired === "undefined") desired = board[pos.x][pos.y];
+
+    let dest = addCords(direction, pos);
+    if (!positionInBounds(dest)) {
+        return false;
+    }
+    let value = board[dest.x][dest.y];
+    if (desired === value) matches++;
+    else {
+        return false;
+    }
+    if (matches === 4) return true;
+    else return check(dest, direction, desired, matches);
+}
+
+function switchPlayer() {
     if (currentPlayer === players[0]) currentPlayer = players[1];
     else currentPlayer = players[0];
+}
+function evaluateRound() {
+    switchPlayer();
     render();
 }
 function init() {
@@ -45,13 +76,6 @@ function init() {
     numberOfColumns = 6;
     numberOfRows = 7;
     board = [
-        // [1, 0, 0, 0, 0, 0],
-        // [1, 1, 0, 0, 0, 0],
-        // [2, 2, 0, 0, 0, 0],
-        // [2, 1, 2, 0, 0, 0],
-        // [1, 1, 2, 0, 0, 0],
-        // [1, 1, 2, 1, 1, 1],
-        // [1, 1, 2, 2, 2, 2],
         [0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
