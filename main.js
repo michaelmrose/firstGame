@@ -158,7 +158,6 @@ function init() {
 function render() {
     renderBoard();
     renderMessages();
-    renderControls();
 }
 
 function renderBoard() {
@@ -174,6 +173,5 @@ function renderMessages() {
     messageElement.innerText = message;
     messageElement.style.color = currentPlayer.color;
 }
-function renderControls() {}
 
 init();
