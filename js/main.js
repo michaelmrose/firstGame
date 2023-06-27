@@ -15,14 +15,12 @@ let players;
 let latestInsertion;
 let message;
 /*----- cached elements  -----*/
+let messageElement = document.getElementById("message");
+let markersElement = document.getElementById("markers");
 
-/*----- event listeners -----*/
-document.getElementById("markers").addEventListener("click", handleMarkerClick);
 document.getElementById("reset_button").addEventListener("click", init);
 
 function handleMarkerClick(evt) {
-    // evaluateRound only if clicking on a div and insertion succeeds
-    // meaning column wasn't full
     if (evt.target.tagName !== "DIV") return;
     let latestInsertion = insert(evt.target.id, currentPlayer.boardValue);
     if (latestInsertion) {
@@ -34,8 +32,9 @@ function handleMarkerClick(evt) {
 
 /*----- functions -----*/
 function insert(col, n) {
-    let top = board[col].indexOf(0);
+    let top = board[col].indexOf(0); //first zero is the first empty slot
     if (top !== -1) {
+        //if not already full
         board[col][top] = n;
         {
             let latestInsertion = { x: parseInt(col), y: top };
@@ -92,9 +91,11 @@ function evaluateRound() {
 }
 
 function endGame() {
-    alert("this is the end");
+    message = `${currentPlayer.color.toUpperCase()} WINS`;
+    markersElement.removeEventListener("click", handleMarkerClick);
 }
 function init() {
+    markersElement.addEventListener("click", handleMarkerClick);
     players = [
         { name: "player-one", color: "purple", boardValue: 1 },
         { name: "player-two", color: "gold", boardValue: 2 },
@@ -131,9 +132,8 @@ function renderBoard() {
 }
 
 function renderMessages() {
-    let el = document.getElementById("message");
-    el.innerText = message;
-    el.style.color = currentPlayer.color;
+    messageElement.innerText = message;
+    messageElement.style.color = currentPlayer.color;
 }
 function renderControls() {}
 
