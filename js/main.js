@@ -104,11 +104,6 @@ function isWinningPosition(pos) {
     return [horizontal, vertial, diagDown, diagUp].some((x) => x > 2);
 }
 
-function evaluateRound() {
-    if (isWinningPosition(latestInsertion)) endGame();
-    else switchPlayer();
-    render();
-}
 function switchPlayer() {
     if (currentPlayer === players[0]) currentPlayer = players[1];
     else currentPlayer = players[0];
