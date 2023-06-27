@@ -1,4 +1,9 @@
 /*----- constants -----*/
+//------------------------------------------------------------//
+// We use positions in the form of {x: number, y: number} both to
+// represent absolute positions and relative positions. EG -1 /1
+// represents a movement along that axis.
+//------------------------------------------------------------//
 const west = { x: -1, y: 0 };
 const east = { x: 1, y: 0 };
 const north = { x: 0, y: 1 };
@@ -7,34 +12,60 @@ const northWest = { x: -1, y: 1 };
 const northEast = { x: 1, y: 1 };
 const southWest = { x: -1, y: -1 };
 const southEast = { x: 1, y: -1 };
-/*----- state variables -----*/
+//-------------------------------------------------------------//
+// STATE VARIABLES
+//-------------------------------------------------------------//
+
 let board;
 let winner;
 let currentPlayer;
 let players;
 let latestInsertion;
 let message;
-/*----- cached elements  -----*/
+
+//-------------------------------------------------------------//
+// ELEMENTS
+//-------------------------------------------------------------//
 let messageElement = document.getElementById("message");
 let markersElement = document.getElementById("markers");
 
 document.getElementById("reset_button").addEventListener("click", init);
 
+//-------------------------------------------------------------//
+// FUNCTIONS
+//-------------------------------------------------------------//
+
+//------------------------------------------------------------//
+// The core logic is contained herein.  Attempt to insert.
+// If insertion succeeds test board along possible axis for 3 addition matching
+// positions and either end the game or switch the active player.
+//------------------------------------------------------------//
+
 function handleMarkerClick(evt) {
-    if (evt.target.tagName !== "DIV") return;
+    //-------------------------------------------------------------//
+    // Only if clicking on a div and insertion succeeds
+    // meaning column wasn't full insert a value
+    //-------------------------------------------------------------//
+    if (evt.target.tagName !== "DIV") return; //click better
     let latestInsertion = insert(evt.target.id, currentPlayer.boardValue);
     if (latestInsertion) {
-        if (winnerp(latestInsertion)) endGame();
+        if (isWinningPosition(latestInsertion)) endGame();
         else switchPlayer();
         render();
     }
 }
 
-/*----- functions -----*/
+//-------------------------------------------------------------//
+// Inserts number representing player into first unoccupied position
+// in col, represented by current value being zero, and then returns
+// the pos of most recent insertion both to see if insertion AND
+// to test the value to see if player won
+//-------------------------------------------------------------//
 function insert(col, n) {
     let top = board[col].indexOf(0); //first zero is the first empty slot
+
+    //if not already full
     if (top !== -1) {
-        //if not already full
         board[col][top] = n;
         {
             let latestInsertion = { x: parseInt(col), y: top };
@@ -43,6 +74,13 @@ function insert(col, n) {
     } else return false;
 }
 
+//-------------------------------------------------------------//
+// Takes position {x: n y: n} and direction {x: n y: n} and uses to them
+// to recursively find the number of positions matching the value
+// found at pos. It returns the current number of matches when we
+// either run off the board, find a non-matching value, or get to 3
+// indicating we have a total of 4 matching values in a line.
+//-------------------------------------------------------------//
 function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
     let dest = addCords(direction, pos);
     if (!positionInBounds(dest)) return matches;
@@ -53,12 +91,28 @@ function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
     if (matches === 3) return 3;
     else return check(dest, direction, desired, matches);
 }
-function winnerp(pos) {
+//-------------------------------------------------------------//
+// If the number of matches found along combination of vectors eg
+// east and west is 3 or more the position is a winning position and
+// currentPlayer is the winner.
+//-------------------------------------------------------------//
+function isWinningPosition(pos) {
     const horizontal = check(pos, west) + check(pos, east);
     const vertial = check(pos, north) + check(pos, south);
     const diagUp = check(pos, northEast) + check(pos, southWest);
     const diagDown = check(pos, southEast) + check(pos, northWest);
     return [horizontal, vertial, diagDown, diagUp].some((x) => x > 2);
+}
+
+function evaluateRound() {
+    if (isWinningPosition(latestInsertion)) endGame();
+    else switchPlayer();
+    render();
+}
+function switchPlayer() {
+    if (currentPlayer === players[0]) currentPlayer = players[1];
+    else currentPlayer = players[0];
+    message = `${currentPlayer.color.toUpperCase()}'s TURN `;
 }
 
 function valueToColor(n) {
@@ -77,17 +131,6 @@ function positionInBounds(pos) {
 
 function addCords(obA, obB) {
     return { x: obA.x + obB.x, y: obA.y + obB.y };
-}
-
-function switchPlayer() {
-    if (currentPlayer === players[0]) currentPlayer = players[1];
-    else currentPlayer = players[0];
-    message = `${currentPlayer.color.toUpperCase()}'s TURN `;
-}
-function evaluateRound() {
-    if (winnerp(latestInsertion)) endGame();
-    else switchPlayer();
-    render();
 }
 
 function endGame() {
