@@ -98,10 +98,10 @@ function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
 //-------------------------------------------------------------//
 function isWinningPosition(pos) {
     const horizontal = check(pos, west) + check(pos, east);
-    const vertial = check(pos, north) + check(pos, south);
+    const vertical = check(pos, north) + check(pos, south);
     const diagUp = check(pos, northEast) + check(pos, southWest);
     const diagDown = check(pos, southEast) + check(pos, northWest);
-    return [horizontal, vertial, diagDown, diagUp].some((x) => x > 2);
+    return [horizontal, vertical, diagDown, diagUp].some((x) => x > 2);
 }
 
 function switchPlayer() {
