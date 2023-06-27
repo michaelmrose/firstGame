@@ -110,6 +110,11 @@ function switchPlayer() {
     message = `${currentPlayer.color.toUpperCase()}'s TURN `;
 }
 
+function endGame() {
+    message = `${currentPlayer.color.toUpperCase()} WINS`;
+    markersElement.removeEventListener("click", handleMarkerClick);
+}
+
 function valueToColor(n) {
     if (n === 0) return "white";
     else return players.filter((x) => x.boardValue == n)[0].color;
@@ -128,10 +133,6 @@ function addCords(obA, obB) {
     return { x: obA.x + obB.x, y: obA.y + obB.y };
 }
 
-function endGame() {
-    message = `${currentPlayer.color.toUpperCase()} WINS`;
-    markersElement.removeEventListener("click", handleMarkerClick);
-}
 function init() {
     markersElement.addEventListener("click", handleMarkerClick);
     players = [
