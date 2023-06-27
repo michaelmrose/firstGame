@@ -23,7 +23,12 @@ function handleMarkerClick(evt) {
     // evaluateRound only if clicking on a div and insertion succeeds
     // meaning column wasn't full
     if (evt.target.tagName !== "DIV") return;
-    if (insert(evt.target.id, currentPlayer.boardValue)) evaluateRound();
+    let latestInsertion = insert(evt.target.id, currentPlayer.boardValue);
+    if (latestInsertion) {
+        if (winnerp(latestInsertion)) endGame();
+        else switchPlayer();
+        render();
+    }
 }
 
 /*----- functions -----*/
@@ -32,20 +37,20 @@ function insert(col, n) {
     if (top !== -1) {
         board[col][top] = n;
         {
-            latestInsertion = { x: parseInt(col), y: top };
-            return true;
+            let latestInsertion = { x: parseInt(col), y: top };
+            return latestInsertion;
         }
     } else return false;
 }
 
-function check(pos, direction, desired = board[pos.x][pos.y], matches = 1) {
+function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
     let dest = addCords(direction, pos);
     if (!positionInBounds(dest)) return matches;
     let value = board[dest.x][dest.y];
     if (desired !== value) {
         return matches;
     } else matches++;
-    if (matches === 4) return 4;
+    if (matches === 3) return 3;
     else return check(dest, direction, desired, matches);
 }
 function winnerp(pos) {
@@ -53,7 +58,7 @@ function winnerp(pos) {
     const vertial = check(pos, north) + check(pos, south);
     const diagUp = check(pos, northEast) + check(pos, southWest);
     const diagDown = check(pos, southEast) + check(pos, northWest);
-    return [horizontal, vertial, diagDown, diagUp].some((x) => x > 3);
+    return [horizontal, vertial, diagDown, diagUp].some((x) => x > 2);
 }
 
 function valueToColor(n) {
@@ -79,8 +84,13 @@ function switchPlayer() {
     else currentPlayer = players[0];
 }
 function evaluateRound() {
-    switchPlayer();
+    if (winnerp(latestInsertion)) endGame();
+    else switchPlayer();
     render();
+}
+
+function endGame() {
+    alert("this is the end");
 }
 function init() {
     players = [
