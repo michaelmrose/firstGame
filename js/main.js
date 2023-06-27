@@ -29,7 +29,7 @@ function insert(col, n) {
 }
 function valueToColor(n) {
     if (n === 0) return "white";
-    else return players[n - 1].color;
+    else return players.filter((x) => x.boardValue == n)[0].color;
 }
 
 function evaluateRound() {
