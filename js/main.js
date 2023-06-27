@@ -13,6 +13,7 @@ let winner;
 let currentPlayer;
 let players;
 let latestInsertion;
+let message;
 /*----- cached elements  -----*/
 
 /*----- event listeners -----*/
@@ -82,6 +83,7 @@ function addCords(obA, obB) {
 function switchPlayer() {
     if (currentPlayer === players[0]) currentPlayer = players[1];
     else currentPlayer = players[0];
+    message = `${currentPlayer.color.toUpperCase()}'s TURN `;
 }
 function evaluateRound() {
     if (winnerp(latestInsertion)) endGame();
@@ -110,6 +112,7 @@ function init() {
     ];
     currentPlayer = players[0];
     winner = null;
+    message = `${currentPlayer.color.toUpperCase()}'s TURN `;
     render();
 }
 function render() {
@@ -129,9 +132,8 @@ function renderBoard() {
 
 function renderMessages() {
     let el = document.getElementById("message");
-    let color = currentPlayer.color.toUpperCase();
-    el.innerText = `${color}'s TURN`;
-    el.style.color = color;
+    el.innerText = message;
+    el.style.color = currentPlayer.color;
 }
 function renderControls() {}
 
