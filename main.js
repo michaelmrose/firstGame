@@ -22,6 +22,8 @@ let currentPlayer;
 let players;
 let latestInsertion;
 let message;
+let numberOfColumns;
+let numberOfRows;
 
 //-------------------------------------------------------------//
 // ELEMENTS
@@ -132,24 +134,26 @@ function positionInBounds(pos) {
 function addCords(obA, obB) {
     return { x: obA.x + obB.x, y: obA.y + obB.y };
 }
-
+function repeat(x, times) {
+    let res = [];
+    for (let i = 0; i < times; i++) res.push(x);
+    return res;
+}
 function init() {
     markersElement.addEventListener("click", handleMarkerClick);
     players = [
         { name: "player-one", color: "purple", boardValue: 1 },
         { name: "player-two", color: "gold", boardValue: 2 },
     ];
-    numberOfColumns = 6;
-    numberOfRows = 7;
-    board = [
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-    ];
+
+    numberOfColumns = 7;
+    numberOfRows = 6;
+    board = [];
+    let column = repeat(0, numberOfRows);
+    for (let i = 0; i < numberOfColumns; i++) {
+        board.push(column.slice(0));
+    }
+
     currentPlayer = players[0];
     winner = null;
     message = `${currentPlayer.color.toUpperCase()}'s TURN `;
