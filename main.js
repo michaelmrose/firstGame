@@ -51,13 +51,18 @@ function handleMarkerClick(evt) {
     // meaning column wasn't full insert a value
     //-------------------------------------------------------------//
     if (evt.target.tagName !== "DIV") return; //click better
-    let latestInsertion = insert(evt.target.id, currentPlayer.boardValue);
+    let latestInsertion = insert(evt.target.column, currentPlayer.boardValue);
     if (latestInsertion) {
         if (isWinningPosition(latestInsertion)) endGame();
         else switchPlayer();
         render();
     }
 }
+
+boardEl.addEventListener("click", (evt) => {
+    if (evt.target.tagName !== "DIV") return;
+    console.log(evt.target.column);
+});
 
 //-------------------------------------------------------------//
 // Inserts number representing player into first unoccupied position
@@ -118,6 +123,7 @@ function switchPlayer() {
 function endGame() {
     message = `${currentPlayer.color.toUpperCase()} WINS`;
     markersElement.removeEventListener("click", handleMarkerClick);
+    boardEl.removeEventListener("click", handleMarkerClick);
 }
 
 function valueToColor(n) {
@@ -148,6 +154,8 @@ function buildBoard(width, height, boardEl) {
         for (let columnNumber = 0; columnNumber < height; columnNumber++) {
             let el = document.createElement("div");
             el.id = `c${columnNumber}r${rowNumber}`;
+            el.row = rowNumber;
+            el.column = columnNumber;
             boardEl.appendChild(el);
         }
     }
@@ -156,6 +164,7 @@ function buildMarkers(width, markerEl) {
     for (let i = 0; i < width; i++) {
         let el = document.createElement("div");
         el.id = i;
+        el.column = i;
         markerEl.appendChild(el);
     }
 }
@@ -195,6 +204,7 @@ function init() {
     message = `${currentPlayer.color.toUpperCase()}'s TURN `;
     render();
     markersElement.addEventListener("click", handleMarkerClick);
+    boardEl.addEventListener("click", handleMarkerClick);
 }
 function render() {
     renderBoard();
