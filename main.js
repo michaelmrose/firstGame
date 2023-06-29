@@ -30,6 +30,7 @@ let numberOfRows;
 //-------------------------------------------------------------//
 let messageElement = document.getElementById("message");
 let markersElement = document.getElementById("markers");
+let boardEl = document.getElementById("board");
 
 document.getElementById("reset_button").addEventListener("click", init);
 
@@ -139,8 +140,31 @@ function repeat(x, times) {
     for (let i = 0; i < times; i++) res.push(x);
     return res;
 }
+
+function buildBoard(width, height, boardEl) {
+    for (let rowNumber = width - 1; rowNumber >= 0; rowNumber--) {
+        for (let columnNumber = 0; columnNumber < height; columnNumber++) {
+            let el = document.createElement("div");
+            el.id = `c${columnNumber}r${rowNumber}`;
+            boardEl.appendChild(el);
+        }
+    }
+}
+function buildMarkers(width, markerEl) {
+    for (let i = 0; i < width; i++) {
+        let el = document.createElement("div");
+        el.id = i;
+        markerEl.appendChild(el);
+    }
+}
+
+function clearBoardandMarkers() {
+    boardEl.innerHTML = "";
+    markersElement.innerHTML = "";
+}
+
 function init() {
-    markersElement.addEventListener("click", handleMarkerClick);
+    clearBoardandMarkers();
     players = [
         { name: "player-one", color: "purple", boardValue: 1 },
         { name: "player-two", color: "gold", boardValue: 2 },
@@ -153,11 +177,14 @@ function init() {
     for (let i = 0; i < numberOfColumns; i++) {
         board.push(column.slice(0));
     }
+    buildBoard(numberOfRows, numberOfColumns, boardEl);
+    buildMarkers(numberOfColumns, markersElement);
 
     currentPlayer = players[0];
     winner = null;
     message = `${currentPlayer.color.toUpperCase()}'s TURN `;
     render();
+    markersElement.addEventListener("click", handleMarkerClick);
 }
 function render() {
     renderBoard();
