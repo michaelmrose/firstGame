@@ -24,6 +24,7 @@ let latestInsertion;
 let message;
 let numberOfColumns;
 let numberOfRows;
+let matchesToWin;
 
 //-------------------------------------------------------------//
 // ELEMENTS
@@ -100,11 +101,13 @@ function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
 // currentPlayer is the winner.
 //-------------------------------------------------------------//
 function isWinningPosition(pos) {
-    const horizontal = check(pos, west) + check(pos, east);
-    const vertical = check(pos, north) + check(pos, south);
-    const diagUp = check(pos, northEast) + check(pos, southWest);
-    const diagDown = check(pos, southEast) + check(pos, northWest);
-    return [horizontal, vertical, diagDown, diagUp].some((x) => x > 2);
+    const horizontal = check(pos, west) + check(pos, east) + 1;
+    const vertical = check(pos, north) + check(pos, south) + 1;
+    const diagUp = check(pos, northEast) + check(pos, southWest) + 1;
+    const diagDown = check(pos, southEast) + check(pos, northWest) + 1;
+    return [horizontal, vertical, diagDown, diagUp].some(
+        (x) => x >= matchesToWin
+    );
 }
 
 function switchPlayer() {
@@ -162,6 +165,7 @@ function clearBoardandMarkers() {
     boardEl.innerHTML = "";
     markersElement.innerHTML = "";
 }
+
 //TODO this shouldn't hardcode the 9 here and markers should be a child of game
 function setBoardColumnsStyle(width, boardEl, markerEl) {
     boardEl.style.gridTemplateColumns = `repeat(${width},9vmin)`;
@@ -177,6 +181,7 @@ function init() {
 
     numberOfColumns = 3;
     numberOfRows = 3;
+    matchesToWin = 3;
     board = [];
     let column = repeat(0, numberOfRows);
     for (let i = 0; i < numberOfColumns; i++) {
