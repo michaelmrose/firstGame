@@ -162,6 +162,11 @@ function clearBoardandMarkers() {
     boardEl.innerHTML = "";
     markersElement.innerHTML = "";
 }
+//TODO this shouldn't hardcode the 9 here and markers should be a child of game
+function setBoardColumnsStyle(width, boardEl, markerEl) {
+    boardEl.style.gridTemplateColumns = `repeat(${width},9vmin)`;
+    markerEl.style.gridTemplateColumns = `repeat(${width},9vmin)`;
+}
 
 function init() {
     clearBoardandMarkers();
@@ -170,8 +175,8 @@ function init() {
         { name: "player-two", color: "gold", boardValue: 2 },
     ];
 
-    numberOfColumns = 7;
-    numberOfRows = 6;
+    numberOfColumns = 3;
+    numberOfRows = 3;
     board = [];
     let column = repeat(0, numberOfRows);
     for (let i = 0; i < numberOfColumns; i++) {
@@ -179,6 +184,7 @@ function init() {
     }
     buildBoard(numberOfRows, numberOfColumns, boardEl);
     buildMarkers(numberOfColumns, markersElement);
+    setBoardColumnsStyle(numberOfColumns, boardEl, markersElement);
 
     currentPlayer = players[0];
     winner = null;
