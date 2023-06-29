@@ -91,9 +91,8 @@ function check(pos, direction, desired = board[pos.x][pos.y], matches = 0) {
     let value = board[dest.x][dest.y];
     if (desired !== value) {
         return matches;
-    } else matches++;
-    if (matches === 3) return 3;
-    else return check(dest, direction, desired, matches);
+    }
+    return check(dest, direction, desired, ++matches);
 }
 //-------------------------------------------------------------//
 // If the number of matches found along combination of vectors eg
@@ -179,9 +178,9 @@ function init() {
         { name: "player-two", color: "gold", boardValue: 2 },
     ];
 
-    numberOfColumns = 3;
-    numberOfRows = 3;
-    matchesToWin = 3;
+    numberOfColumns = 9;
+    numberOfRows = 6;
+    matchesToWin = 5;
     board = [];
     let column = repeat(0, numberOfRows);
     for (let i = 0; i < numberOfColumns; i++) {
