@@ -155,10 +155,23 @@ class Game {
         }
     }
 
-    //TODO this shouldn't hardcode the 9 here and markers should be a child of game
     setBoardColumnsStyle(width, boardEl, markerEl) {
-        this.boardElement.style.gridTemplateColumns = `repeat(${width},9vmin)`;
-        this.markersElement.style.gridTemplateColumns = `repeat(${width},9vmin)`;
+        let root = document.querySelector(":root");
+        let size =
+            parseInt(
+                getComputedStyle(root).getPropertyValue(
+                    "--game-element-space-available"
+                )
+            ) / this.height;
+
+        // let size = 54 / this.height;
+        let markersBorderWidth = `${(size / 9) * 5}vmin`;
+        this.boardElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
+        this.boardElement.style.gridTemplateRows = `repeat(${width},${size}vmin)`;
+        this.markersElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
+        markersElement
+            .querySelectorAll("div")
+            .forEach((e) => (e.style.borderWidth = markersBorderWidth));
     }
 
     clearBoardandMarkers() {
@@ -281,9 +294,9 @@ function init() {
         messageElement,
         titleElement,
         "CONNECT 19",
-        7,
-        6,
-        4,
+        3,
+        3,
+        3,
         ["purple", "red"],
         {
             winSound: "win.mp3",
