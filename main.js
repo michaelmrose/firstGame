@@ -259,15 +259,6 @@ class Game {
         );
     }
 
-    positionInBounds(pos) {
-        return (
-            pos.y >= 0 &&
-            pos.y < this.board[0].length &&
-            pos.x >= 0 &&
-            pos.x < this.board.length
-        );
-    }
-
     switchPlayer() {
         if (this.currentPlayer === this.players[0])
             this.currentPlayer = this.players[1];
