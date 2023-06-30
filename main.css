@@ -9,16 +9,9 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: top;
     align-items: center;
     background-color: "#fff";
-}
-
-div#around {
-    border-style: solid;
-    border-color: black;
-    border-width: 0.2vmin;
-    padding: 2vmin;
 }
 
 header {
@@ -69,11 +62,6 @@ h1 {
     border-style: solid;
     border-width: 0.2vmin;
     border-color: darkgrey;
-}
-
-#controls {
-    width: 20vmin;
-    padding: 1vmin;
 }
 
 button {
