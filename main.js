@@ -61,7 +61,6 @@ class Game {
         messageElement,
         titleElement,
         colors,
-        // sounds,
         title,
         width,
         height,
@@ -86,6 +85,7 @@ class Game {
             winSound: "win.mp3",
             playSound: "woosh.mp3",
             resetSound: "button.mp3",
+            tieSound: "tie.mp3",
         };
 
         this.board = [];
@@ -163,7 +163,7 @@ class Game {
 
     setBoardColumnsStyle(width, boardEl, markerEl) {
         let size = 74 / this.height;
-        if (document.documentElement.clientWidth > 620) size = 50 / this.height;
+        if (document.documentElement.clientWidth > 620) size = 42 / this.height;
         let markersBorderWidth = `${(size / 9) * 5}vmin`;
         this.boardElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
         this.boardElement.style.gridTemplateRows = `repeat(${width},${size}vmin)`;
@@ -196,10 +196,12 @@ class Game {
         if (evt.target.tagName !== "DIV") return; //click better
         let latestInsertion = this.insert(
             evt.target.column,
+            evt.target.row,
             this.currentPlayer.boardValue
         );
         if (latestInsertion) {
             if (this.isWinningPosition(latestInsertion)) this.endGame();
+            else if (this.isBoardFull()) this.tieGame();
             else this.switchPlayer();
             this.render();
         }
@@ -211,7 +213,7 @@ class Game {
     // the pos of most recent insertion both to see if insertion AND
     // to test the value to see if player won
     //-------------------------------------------------------------//
-    insert(col, n) {
+    insert(col, row, n) {
         let top = this.board[col].indexOf(0); //first zero is the first empty slot
 
         //if not already full
@@ -264,11 +266,18 @@ class Game {
         else this.currentPlayer = this.players[0];
         this.message = `${this.currentPlayer.color.toUpperCase()}'s TURN `;
     }
-
+    tieGame() {
+        this.message = "TIE: NOBODY WINS";
+        this.winner = "nobody";
+        this.play(this.sounds.tieSound);
+    }
     endGame() {
         this.winner = this.currentPlayer;
         this.message = `${this.currentPlayer.color.toUpperCase()} WINS`;
         this.play(this.sounds.winSound);
+    }
+    isBoardFull() {
+        return game.board.flat().every((n) => n !== 0);
     }
     valueToColor(n) {
         if (n === 0) return "white";
@@ -329,6 +338,14 @@ class TicTacToe extends Game {
             height,
             matchesToWin
         );
+    }
+    insert(col, row, n) {
+        if (this.winner == null && this.board[col][row] == 0) {
+            this.board[col][row] = n;
+            let latestInsertion = new Position(col, row);
+            this.play(this.sounds.playSound);
+            return latestInsertion;
+        } else return false;
     }
 }
 function repeat(x, times) {
