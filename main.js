@@ -60,38 +60,34 @@ class Game {
         markersElement,
         messageElement,
         titleElement,
-        // title,
-        // width,
-        // height,
-        // matchesToWin,
         colors,
-        sounds
+        // sounds,
+        title,
+        width,
+        height,
+        matchesToWin
     ) {
+        this.title = title;
+        this.width = width;
+        this.height = height;
+        this.area = new Area(this.width, this.height);
+        this.matchesToWin = matchesToWin;
         this.boardElement = boardElement;
         this.markersElement = markersElement;
         this.messageElement = messageElement;
         this.titleElement = titleElement;
-        this.title = "Generic Title";
         this.message = "";
         this.colors = colors;
         this.players = [
             { name: "player-one", color: this.colors[0], boardValue: 1 },
             { name: "player-two", color: this.colors[1], boardValue: 2 },
         ];
-        // this.sounds = sounds;
         this.sounds = {
             winSound: "win.mp3",
             playSound: "woosh.mp3",
             resetSound: "button.mp3",
         };
 
-        // this.width = width;
-        // this.height = height;
-        this.width = 4;
-        this.height = 4;
-        this.area = new Area(this.width, this.height);
-        // this.matchesToWin = matchesToWin;
-        this.matchesToWin = 4;
         this.board = [];
         let column = repeat(0, this.height);
         for (let i = 0; i < this.width; i++) {
@@ -99,6 +95,8 @@ class Game {
         }
         this.buildBoard(this.height, this.width, this.boardElement);
         this.buildMarkers(this.width, this.markersElement);
+        // some properties need to be set so that the next row starts at the correct point
+        // and individual elements are sized nicely
         this.setBoardColumnsStyle(
             this.width,
             this.boardElement,
@@ -165,7 +163,7 @@ class Game {
 
     setBoardColumnsStyle(width, boardEl, markerEl) {
         let size = 74 / this.height;
-        if (document.documentElement.clientWidth > 620) size = 54 / this.height;
+        if (document.documentElement.clientWidth > 620) size = 50 / this.height;
         let markersBorderWidth = `${(size / 9) * 5}vmin`;
         this.boardElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
         this.boardElement.style.gridTemplateRows = `repeat(${width},${size}vmin)`;
@@ -282,6 +280,57 @@ class Game {
     }
 }
 
+class ConnectFour extends Game {
+    constructor(
+        boardElement,
+        markersElement,
+        messageElement,
+        titleElement,
+        colors
+    ) {
+        let width = 7;
+        let height = 6;
+        let title = "Connect Four";
+        let matchesToWin = 4;
+        super(
+            boardElement,
+            markersElement,
+            messageElement,
+            titleElement,
+            colors,
+            title,
+            width,
+            height,
+            matchesToWin
+        );
+    }
+}
+
+class TicTacToe extends Game {
+    constructor(
+        boardElement,
+        markersElement,
+        messageElement,
+        titleElement,
+        colors
+    ) {
+        let width = 3;
+        let height = 3;
+        let title = "Tic Tac Toe";
+        let matchesToWin = 3;
+        super(
+            boardElement,
+            markersElement,
+            messageElement,
+            titleElement,
+            colors,
+            title,
+            width,
+            height,
+            matchesToWin
+        );
+    }
+}
 function repeat(x, times) {
     let res = [];
     for (let i = 0; i < times; i++) res.push(x);
@@ -289,10 +338,13 @@ function repeat(x, times) {
 }
 
 function init() {
-    game = new Game(boardEl, markersElement, messageElement, titleElement, [
-        "purple",
-        "red",
-    ]);
+    game = new TicTacToe(
+        boardEl,
+        markersElement,
+        messageElement,
+        titleElement,
+        ["purple", "red"]
+    );
 }
 
 function reset() {
