@@ -4,14 +4,14 @@
 // represent absolute positions and relative positions. EG -1 /1
 // represents a movement along that axis.
 //------------------------------------------------------------//
-const west = { x: -1, y: 0 };
-const east = { x: 1, y: 0 };
-const north = { x: 0, y: 1 };
-const south = { x: 0, y: -1 };
-const northWest = { x: -1, y: 1 };
-const northEast = { x: 1, y: 1 };
-const southWest = { x: -1, y: -1 };
-const southEast = { x: 1, y: -1 };
+// const west = { x: -1, y: 0 };
+// const east = { x: 1, y: 0 };
+// const north = { x: 0, y: 1 };
+// const south = { x: 0, y: -1 };
+// const northWest = { x: -1, y: 1 };
+// const northEast = { x: 1, y: 1 };
+// const southWest = { x: -1, y: -1 };
+// const southEast = { x: 1, y: -1 };
 //-------------------------------------------------------------//
 // STATE VARIABLES
 //-------------------------------------------------------------//
@@ -60,6 +60,23 @@ class Position {
         );
     }
 }
+
+const west = new Position(-1, 0);
+const east = new Position(1, 0);
+const north = new Position(0, 1);
+const south = new Position(0, -1);
+const northWest = new Position(-1, 1);
+const northEast = new Position(1, 1);
+const southWest = new Position(-1, -1);
+const southEast = new Position(1, -1);
+
+class Area {
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+}
+
 class Game {
     constructor(
         boardElement,
@@ -86,6 +103,7 @@ class Game {
 
         this.width = width;
         this.height = height;
+        this.area = new Area(width, height);
         this.matchesToWin = matchesToWin;
         this.board = [];
         let column = repeat(0, this.height);
@@ -155,8 +173,8 @@ class Game {
 
     //TODO this shouldn't hardcode the 9 here and markers should be a child of game
     setBoardColumnsStyle(width, boardEl, markerEl) {
-        boardEl.style.gridTemplateColumns = `repeat(${width},9vmin)`;
-        markerEl.style.gridTemplateColumns = `repeat(${width},9vmin)`;
+        this.boardElement.style.gridTemplateColumns = `repeat(${width},9vmin)`;
+        this.markersElement.style.gridTemplateColumns = `repeat(${width},9vmin)`;
     }
 
     clearBoardandMarkers() {
@@ -198,10 +216,10 @@ class Game {
         let top = this.board[col].indexOf(0); //first zero is the first empty slot
 
         //if not already full
-        if (top !== -1) {
+        if (top !== -1 && this.winner == null) {
             this.board[col][top] = n;
             {
-                let latestInsertion = { x: parseInt(col), y: top };
+                let latestInsertion = new Position(parseInt(col), top);
                 this.play("woosh.mp3");
                 return latestInsertion;
             }
@@ -216,8 +234,8 @@ class Game {
     // indicating we have a total of 4 matching values in a line.
     //-------------------------------------------------------------//
     check(pos, direction, desired = this.board[pos.x][pos.y], matches = 0) {
-        let dest = addCords(direction, pos);
-        if (!this.positionInBounds(dest)) return matches;
+        let dest = pos.add(direction);
+        if (!dest.within(this.area)) return matches;
         let value = this.board[dest.x][dest.y];
         if (desired !== value) {
             return matches;
@@ -258,10 +276,8 @@ class Game {
     }
 
     endGame() {
+        this.winner = this.currentPlayer;
         this.message = `${this.currentPlayer.color.toUpperCase()} WINS`;
-        //this removes anon event listeners
-        this.markersElement.outerHTML = this.markersElement.outerHTML;
-        this.boardElement.outerHTML = this.boardElement.outerHTML;
         this.play("win.mp3");
     }
     valueToColor(n) {
@@ -274,16 +290,6 @@ class Game {
     }
 }
 
-class Area {
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-}
-
-function addCords(obA, obB) {
-    return { x: obA.x + obB.x, y: obA.y + obB.y };
-}
 function repeat(x, times) {
     let res = [];
     for (let i = 0; i < times; i++) res.push(x);
@@ -291,16 +297,17 @@ function repeat(x, times) {
 }
 
 function init() {
-    if (typeof game !== "undefined") game.clearBoardandMarkers();
     game = new Game(boardEl, markersElement, messageElement, "title", 7, 6, 4, [
         "purple",
         "gold",
     ]);
 }
 
-init();
-
-document.getElementById("reset_button").addEventListener("click", (evt) => {
-    init();
+function reset() {
     game.play("button.mp3");
-});
+    game.clearBoardandMarkers();
+    init();
+}
+
+init();
+document.getElementById("reset_button").addEventListener("click", reset);
