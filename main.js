@@ -1,33 +1,10 @@
-/*----- constants -----*/
-//------------------------------------------------------------//
-// We use positions in the form of {x: number, y: number} both to
-// represent absolute positions and relative positions. EG -1 /1
-// represents a movement along that axis.
-//------------------------------------------------------------//
-// const west = { x: -1, y: 0 };
-// const east = { x: 1, y: 0 };
-// const north = { x: 0, y: 1 };
-// const south = { x: 0, y: -1 };
-// const northWest = { x: -1, y: 1 };
-// const northEast = { x: 1, y: 1 };
-// const southWest = { x: -1, y: -1 };
-// const southEast = { x: 1, y: -1 };
-//-------------------------------------------------------------//
-// STATE VARIABLES
-//-------------------------------------------------------------//
-
 //-------------------------------------------------------------//
 // ELEMENTS
 //-------------------------------------------------------------//
 let messageElement = document.getElementById("message");
 let markersElement = document.getElementById("markers");
 let boardEl = document.getElementById("board");
-
-// document.getElementById("reset_button").addEventListener("click", init);
-
-//-------------------------------------------------------------//
-// FUNCTIONS
-//-------------------------------------------------------------//
+let titleElement = document.getElementById("title");
 
 //-------------------------------------------------------------//
 // CLASSES
@@ -82,24 +59,26 @@ class Game {
         boardElement,
         markersElement,
         messageElement,
+        titleElement,
         title,
         width,
         height,
         matchesToWin,
-        colors
-        // sounds,
+        colors,
+        sounds
     ) {
         this.boardElement = boardElement;
         this.markersElement = markersElement;
         this.messageElement = messageElement;
+        this.titleElement = titleElement;
         this.title = title;
         this.message = "TEST MSG";
-        this.colors = colors; //not meaningfully wired to anything
+        this.colors = colors;
         this.players = [
-            { name: "player-one", color: "purple", boardValue: 1 },
-            { name: "player-two", color: "gold", boardValue: 2 },
+            { name: "player-one", color: this.colors[0], boardValue: 1 },
+            { name: "player-two", color: this.colors[1], boardValue: 2 },
         ];
-        // this.sounds = sounds; //not wired up to anything
+        this.sounds = sounds;
 
         this.width = width;
         this.height = height;
@@ -133,6 +112,7 @@ class Game {
     render() {
         this.renderBoard();
         this.renderMessages();
+        this.renderTitle();
     }
 
     renderBoard() {
@@ -148,6 +128,10 @@ class Game {
     renderMessages() {
         this.messageElement.innerText = this.message;
         this.messageElement.style.color = this.currentPlayer.color;
+    }
+
+    renderTitle() {
+        titleElement.innerText = this.title;
     }
 
     buildMarkers(width, markerEl) {
@@ -181,6 +165,10 @@ class Game {
         this.boardElement.innerHTML = "";
         this.markersElement.innerHTML = "";
     }
+    reset() {
+        this.clearBoardandMarkers();
+        this.play(this.sounds.resetSound);
+    }
 
     //------------------------------------------------------------//
     // The core logic is contained herein.  Attempt to insert.
@@ -188,11 +176,10 @@ class Game {
     // positions and either end the game or switch the active player.
     //------------------------------------------------------------//
 
-    //ERROR this no longer points to object
     handleMarkerClick(evt) {
         //-------------------------------------------------------------//
-        // Only if clicking on a div and insertion succeeds
-        // meaning column wasn't full insert a value
+        // Only if clicking on a div and insertion succeeds meaing a
+        //column wasn't full nor a winner already declared insert a value
         //-------------------------------------------------------------//
         if (evt.target.tagName !== "DIV") return; //click better
         let latestInsertion = this.insert(
@@ -220,7 +207,7 @@ class Game {
             this.board[col][top] = n;
             {
                 let latestInsertion = new Position(parseInt(col), top);
-                this.play("woosh.mp3");
+                this.play(this.sounds.playSound);
                 return latestInsertion;
             }
         } else return false;
@@ -269,7 +256,7 @@ class Game {
     endGame() {
         this.winner = this.currentPlayer;
         this.message = `${this.currentPlayer.color.toUpperCase()} WINS`;
-        this.play("win.mp3");
+        this.play(this.sounds.winSound);
     }
     valueToColor(n) {
         if (n === 0) return "white";
@@ -288,15 +275,26 @@ function repeat(x, times) {
 }
 
 function init() {
-    game = new Game(boardEl, markersElement, messageElement, "title", 7, 6, 4, [
-        "purple",
-        "gold",
-    ]);
+    game = new Game(
+        boardEl,
+        markersElement,
+        messageElement,
+        titleElement,
+        "CONNECT 19",
+        7,
+        6,
+        4,
+        ["purple", "red"],
+        {
+            winSound: "win.mp3",
+            playSound: "woosh.mp3",
+            resetSound: "button.mp3",
+        }
+    );
 }
 
 function reset() {
-    game.play("button.mp3");
-    game.clearBoardandMarkers();
+    game.reset();
     init();
 }
 
