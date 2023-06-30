@@ -292,7 +292,7 @@ function repeat(x, times) {
 
 function init() {
     if (typeof game !== "undefined") game.clearBoardandMarkers();
-    game = new Game(boardEl, markersElement, messageElement, "title", 4, 4, 4, [
+    game = new Game(boardEl, markersElement, messageElement, "title", 7, 6, 4, [
         "purple",
         "gold",
     ]);
