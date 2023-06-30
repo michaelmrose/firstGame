@@ -202,6 +202,7 @@ class Game {
             this.board[col][top] = n;
             {
                 let latestInsertion = { x: parseInt(col), y: top };
+                this.play("woosh.mp3");
                 return latestInsertion;
             }
         } else return false;
@@ -261,10 +262,15 @@ class Game {
         //this removes anon event listeners
         this.markersElement.outerHTML = this.markersElement.outerHTML;
         this.boardElement.outerHTML = this.boardElement.outerHTML;
+        this.play("win.mp3");
     }
     valueToColor(n) {
         if (n === 0) return "white";
         else return this.players.filter((x) => x.boardValue == n)[0].color;
+    }
+    play(file) {
+        let audio = new Audio(file);
+        audio.play();
     }
 }
 
@@ -294,4 +300,7 @@ function init() {
 
 init();
 
-document.getElementById("reset_button").addEventListener("click", init);
+document.getElementById("reset_button").addEventListener("click", (evt) => {
+    init();
+    game.play("button.mp3");
+});
