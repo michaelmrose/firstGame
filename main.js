@@ -60,10 +60,10 @@ class Game {
         markersElement,
         messageElement,
         titleElement,
-        title,
-        width,
-        height,
-        matchesToWin,
+        // title,
+        // width,
+        // height,
+        // matchesToWin,
         colors,
         sounds
     ) {
@@ -71,19 +71,27 @@ class Game {
         this.markersElement = markersElement;
         this.messageElement = messageElement;
         this.titleElement = titleElement;
-        this.title = title;
-        this.message = "TEST MSG";
+        this.title = "Generic Title";
+        this.message = "";
         this.colors = colors;
         this.players = [
             { name: "player-one", color: this.colors[0], boardValue: 1 },
             { name: "player-two", color: this.colors[1], boardValue: 2 },
         ];
-        this.sounds = sounds;
+        // this.sounds = sounds;
+        this.sounds = {
+            winSound: "win.mp3",
+            playSound: "woosh.mp3",
+            resetSound: "button.mp3",
+        };
 
-        this.width = width;
-        this.height = height;
-        this.area = new Area(width, height);
-        this.matchesToWin = matchesToWin;
+        // this.width = width;
+        // this.height = height;
+        this.width = 4;
+        this.height = 4;
+        this.area = new Area(this.width, this.height);
+        // this.matchesToWin = matchesToWin;
+        this.matchesToWin = 4;
         this.board = [];
         let column = repeat(0, this.height);
         for (let i = 0; i < this.width; i++) {
@@ -281,22 +289,10 @@ function repeat(x, times) {
 }
 
 function init() {
-    game = new Game(
-        boardEl,
-        markersElement,
-        messageElement,
-        titleElement,
-        "CONNECT 19",
-        3,
-        3,
-        3,
-        ["purple", "red"],
-        {
-            winSound: "win.mp3",
-            playSound: "woosh.mp3",
-            resetSound: "button.mp3",
-        }
-    );
+    game = new Game(boardEl, markersElement, messageElement, titleElement, [
+        "purple",
+        "red",
+    ]);
 }
 
 function reset() {

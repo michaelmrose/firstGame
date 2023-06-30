@@ -89,3 +89,15 @@ button:hover {
     color: white;
     background-color: darkgrey;
 }
+@media screen and (max-width: 620px) {
+    header {
+        font-size: 8vmin;
+    }
+    h1 {
+        font-size: 6vmin;
+    }
+    button {
+        margin-top: 6vmin;
+        font-size: 6vmin;
+    }
+}
