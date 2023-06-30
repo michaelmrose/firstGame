@@ -34,7 +34,6 @@ let markersElement = document.getElementById("markers");
 let boardEl = document.getElementById("board");
 
 document.getElementById("reset_button").addEventListener("click", init);
-
 //-------------------------------------------------------------//
 // FUNCTIONS
 //-------------------------------------------------------------//
@@ -78,6 +77,7 @@ function insert(col, n) {
         board[col][top] = n;
         {
             let latestInsertion = { x: parseInt(col), y: top };
+            play("woosh.mp3");
             return latestInsertion;
         }
     } else return false;
@@ -124,6 +124,7 @@ function endGame() {
     message = `${currentPlayer.color.toUpperCase()} WINS`;
     markersElement.removeEventListener("click", handleMarkerClick);
     boardEl.removeEventListener("click", handleMarkerClick);
+    play("win.mp3");
 }
 
 function valueToColor(n) {
@@ -163,7 +164,6 @@ function buildBoard(width, height, boardEl) {
 function buildMarkers(width, markerEl) {
     for (let i = 0; i < width; i++) {
         let el = document.createElement("div");
-        el.id = i;
         el.column = i;
         markerEl.appendChild(el);
     }
@@ -182,14 +182,15 @@ function setBoardColumnsStyle(width, boardEl, markerEl) {
 
 function init() {
     clearBoardandMarkers();
+    play("button.mp3");
     players = [
         { name: "player-one", color: "purple", boardValue: 1 },
         { name: "player-two", color: "gold", boardValue: 2 },
     ];
 
-    numberOfColumns = 9;
+    numberOfColumns = 7;
     numberOfRows = 6;
-    matchesToWin = 5;
+    matchesToWin = 3;
     board = [];
     let column = repeat(0, numberOfRows);
     for (let i = 0; i < numberOfColumns; i++) {
@@ -205,6 +206,10 @@ function init() {
     render();
     markersElement.addEventListener("click", handleMarkerClick);
     boardEl.addEventListener("click", handleMarkerClick);
+}
+function play(path) {
+    let player = new Audio(path);
+    player.play();
 }
 function render() {
     renderBoard();
