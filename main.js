@@ -5,6 +5,7 @@ let messageElement = document.getElementById("message");
 let markersElement = document.getElementById("markers");
 let boardEl = document.getElementById("board");
 let titleElement = document.getElementById("title");
+let gamesSelection = document.getElementById("games");
 
 //-------------------------------------------------------------//
 // CLASSES
@@ -355,13 +356,22 @@ function repeat(x, times) {
 }
 
 function init() {
-    game = new TicTacToe(
-        boardEl,
-        markersElement,
-        messageElement,
-        titleElement,
-        ["purple", "red"]
-    );
+    if (gamesSelection.value === "TicTacToe")
+        game = new TicTacToe(
+            boardEl,
+            markersElement,
+            messageElement,
+            titleElement,
+            ["purple", "red"]
+        );
+    else if (gamesSelection.value === "Connect Four")
+        game = new ConnectFour(
+            boardEl,
+            markersElement,
+            messageElement,
+            titleElement,
+            ["purple", "red"]
+        );
 }
 
 function reset() {
@@ -371,3 +381,4 @@ function reset() {
 
 init();
 document.getElementById("reset_button").addEventListener("click", reset);
+gamesSelection.addEventListener("change", reset);
