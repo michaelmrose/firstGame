@@ -190,6 +190,7 @@ class Game {
     reset() {
         this.clearBoardandMarkers();
         this.play(this.sounds.resetSound);
+        this.winner = 0;
     }
 
     //------------------------------------------------------------//
@@ -374,7 +375,9 @@ function repeat(x, times) {
     for (let i = 0; i < times; i++) res.push(x);
     return res;
 }
-
+function removeEventListeners(e) {
+    e.parentNode.replaceChild(e.cloneNode(1), e);
+}
 function init() {
     if (gamesSelection.value === "TicTacToe")
         game = new TicTacToe(
