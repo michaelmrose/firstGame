@@ -108,20 +108,19 @@ class Game {
         optionTicTacToeOptionElement.innerText = "Tic Tac Toe";
         selectElement.appendChild(optionTicTacToeOptionElement);
 
-        let optionWarOptionElement = document.createElement("option");
-        optionWarOptionElement.value = "Connect Four";
-        optionWarOptionElement.innerText = "Connect Four";
-        selectElement.appendChild(optionWarOptionElement);
         let optionConnectFourOptionElement = document.createElement("option");
-        optionConnectFourOptionElement.value = "Global Thermonuclear War";
-        optionConnectFourOptionElement.innerText = "Global Thermonuclear War";
+        optionConnectFourOptionElement.value = "Connect Four";
+        optionConnectFourOptionElement.innerText = "Connect Four";
         selectElement.appendChild(optionConnectFourOptionElement);
 
-        let currentNameIdx = Array.from(selectElement).findIndex(
-            (o) => o.value == this.title
+        let optionWarOptionElement = document.createElement("option");
+        optionWarOptionElement.value = "Global Thermonuclear War";
+        optionWarOptionElement.innerText = "Global Thermonuclear War";
+        selectElement.appendChild(optionWarOptionElement);
+
+        selectElement.selectedIndex = Array.from(selectElement).findIndex(
+            (o) => o.value == title
         );
-        // selectElement.selectedIndex = currentNameIdx;
-        selectElement.addEventListener("change", init);
 
         //=======================================
         // Game Elements
@@ -157,11 +156,7 @@ class Game {
         this.boardElements = this.boardElement.querySelectorAll("div");
         // some properties need to be set so that the next row starts at the correct point
         // and individual elements are sized nicely
-        this.setBoardColumnsStyle(
-            this.width,
-            this.boardElement,
-            this.markersElement
-        );
+        this.setBoardColumnsStyle();
         this.currentPlayer = this.players[0];
         this.winner = null;
         this.message = `${this.currentPlayer.name.toUpperCase()}'s TURN `;
@@ -175,25 +170,7 @@ class Game {
             this.handleMarkerClick.bind(Game)
         );
     }
-    buildBoardElements(targetElement) {
-        this.headerElement = document.createElement("header");
-        this.headerElement.id = "title";
-        this.messageElement = document.createElement("h1");
-        this.messageElement.id = "messages";
-        this.markersElement = document.createElement("section");
-        this.markersElement.id = "markers";
-        this.boardElement = document.createElement("section");
-        this.markersElement.id = "board";
-        this.resetButton = document.createElement("button");
-        this.resetButton.id = "reset_button";
-        this.resetButton.innerText = "Play Again";
 
-        targetElement.appendChild(this.headerElement);
-        targetElement.appendChild(this.messageElement);
-        targetElement.appendChild(this.markersElement);
-        targetElement.appendChild(this.boardElement);
-        targetElement.appendChild(this.resetButton);
-    }
     render() {
         this.renderBoard();
         this.renderMessages();
@@ -244,14 +221,15 @@ class Game {
             }
         }
     }
-
-    setBoardColumnsStyle(width, boardEl, markerEl) {
+    //can't set a css variable based on a media query so manually making some adjustments
+    //herein to ensure that columns and rows end up sized apropriately
+    setBoardColumnsStyle() {
         let size = 74 / this.height;
         if (document.documentElement.clientWidth > 620) size = 42 / this.height;
         let markersBorderWidth = `${(size / 9) * 5}vmin`;
-        this.boardElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
-        this.boardElement.style.gridTemplateRows = `repeat(${width},${size}vmin)`;
-        this.markersElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
+        this.boardElement.style.gridTemplateColumns = `repeat(${this.width},${size}vmin)`;
+        this.boardElement.style.gridTemplateRows = `repeat(${this.width},${size}vmin)`;
+        this.markersElement.style.gridTemplateColumns = `repeat(${this.width},${size}vmin)`;
         this.markersElement
             .querySelectorAll("div")
             .forEach((e) => (e.style.borderWidth = markersBorderWidth));
@@ -260,20 +238,6 @@ class Game {
     clearBoardandMarkers() {
         this.boardElement.innerHTML = "";
         this.markersElement.innerHTML = "";
-    }
-
-    // ===================================================================
-    // TODO winner is set to null because it appears that anon arrow functions added
-    // by the game class as event listeners to enable their usage of "this" do not get removed when game
-    // is bound to a new game object. Instead they become immortal vampires keeping the old game object
-    // in memory and allowing it to call a renderElement member that ought to be dead and muck up a different
-    // game. Setting winner to 0 means these undead renderElements are never called as this value is tested
-    // this is a hacky workaround but it works for now.
-    // ===================================================================
-    // update used bind to ensure non anon functions can be used as event listeners AND deleted  named
-    // event listeners in reset() and yet the issue remains
-    reset() {
-        this.targetElement.innerHTML = "";
     }
 
     //------------------------------------------------------------//
@@ -419,6 +383,18 @@ class TicTacToe extends Game {
         el.style.backgroundImage = img;
     }
 }
+class War extends Game {
+    constructor(targetElement) {
+        let width = 0;
+        let height = 0;
+        let title = "Global Thermonuclear War";
+        let matchesToWin = Infinity;
+        super(targetElement, [], title, width, height, matchesToWin, ["loser"]);
+        this.messageElement.style.color = "red";
+        this.messageElement.innerText =
+            "Strange game, the only way to win is not to play.";
+    }
+}
 function repeat(x, times) {
     let res = [];
     for (let i = 0; i < times; i++) res.push(x);
@@ -428,16 +404,16 @@ function repeat(x, times) {
 let body = document.querySelector("body");
 let game = new TicTacToe(body, ["red", "DodgerBlue"]);
 let gamesSelector = document.querySelector("select");
+gamesSelector.addEventListener("click", init);
 
 function init() {
-    if (gamesSelection === "Tic Tac Toe") {
+    if (gamesSelector.value === "Tic Tac Toe") {
         game = new TicTacToe(body, ["red", "DodgerBlue"]);
-    } else if (gamesSelection === "Connect Four") {
+    } else if (gamesSelector.value === "Connect Four") {
         game = new ConnectFour(body, ["purple", "gold"]);
-    } else {
-        document.querySelector("header").innerText = "YOU LOST";
-        messageElement.innerText =
-            "Strange game, the only way to win is not to play.";
-        messageElement.style.color = "red";
-    }
+    } else if (gamesSelector.value === "Global Thermonuclear War")
+        game = new War(body);
+    //Why are we rebinding these? We just killed them by calling init
+    gamesSelector = document.querySelector("select");
+    gamesSelector.addEventListener("click", init);
 }
