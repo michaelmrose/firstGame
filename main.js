@@ -187,6 +187,12 @@ class Game {
         this.boardElement.innerHTML = "";
         this.markersElement.innerHTML = "";
     }
+    // TODO winner is set to null because it appears that anon arrow functions added
+    // by the game class as event listeners to enable their usage of "this" do not get removed when game
+    // is bound to a new game object. Instead they become immortal vampires keeping the old game object
+    // in memory and allowing it to call a renderElement member that ought to be dead and muck up a different
+    // game. Setting winner to 0 means these undead renderElements are never called as this value is tested
+    // this is a hacky workaround but it works for now.
     reset() {
         this.clearBoardandMarkers();
         this.play(this.sounds.resetSound);
@@ -199,7 +205,7 @@ class Game {
     // positions and either end the game or switch the active player.
     //------------------------------------------------------------//
 
-    handleMarkerClick(evt) {
+    handleMarkerClick = (evt) => {
         //-------------------------------------------------------------//
         // Only if clicking on a div and insertion succeeds meaing a
         //column wasn't full nor a winner already declared insert a value
@@ -216,7 +222,7 @@ class Game {
             else this.switchPlayer();
             this.render();
         }
-    }
+    };
 
     //-------------------------------------------------------------//
     // Inserts number representing player into first unoccupied position
@@ -340,7 +346,7 @@ class TicTacToe extends Game {
         let height = 3;
         let title = "Tic Tac Toe";
         let matchesToWin = 3;
-        let names = ["Xs", "Os"];
+        let names = ["X", "O"];
         super(
             boardElement,
             markersElement,
