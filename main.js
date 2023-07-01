@@ -98,6 +98,8 @@ class Game {
         }
         this.buildBoard(this.height, this.width, this.boardElement);
         this.buildMarkers(this.width, this.markersElement);
+
+        this.boardElements = boardElement.querySelectorAll("div");
         // some properties need to be set so that the next row starts at the correct point
         // and individual elements are sized nicely
         this.setBoardColumnsStyle(
@@ -345,6 +347,7 @@ class TicTacToe extends Game {
             matchesToWin,
             names
         );
+        this.boardElements.forEach((el) => (el.style.borderRadius = "0%"));
     }
     insert(col, row, n) {
         if (this.winner == null && this.board[col][row] == 0) {
