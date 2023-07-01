@@ -1,11 +1,10 @@
 //-------------------------------------------------------------//
 // ELEMENTS
 //-------------------------------------------------------------//
-let messageElement = document.getElementById("message");
-let markersElement = document.getElementById("markers");
-let boardEl = document.getElementById("board");
-let titleElement = document.getElementById("title");
-let gamesSelection = document.getElementById("games");
+// let messageElement = document.getElementById("message");
+// let markersElement = document.getElementById("markers");
+// let boardEl = document.getElementById("board");
+// let titleElement = document.getElementById("title");
 
 //-------------------------------------------------------------//
 // CLASSES
@@ -57,10 +56,7 @@ class Area {
 
 class Game {
     constructor(
-        boardElement,
-        markersElement,
-        messageElement,
-        titleElement,
+        targetElement,
         colors,
         title,
         width,
@@ -68,15 +64,13 @@ class Game {
         matchesToWin,
         names
     ) {
+        this.targetElement = targetElement;
+        this.targetElement.innerHTML = "";
         this.title = title;
         this.width = width;
         this.height = height;
         this.area = new Area(this.width, this.height);
         this.matchesToWin = matchesToWin;
-        this.boardElement = boardElement;
-        this.markersElement = markersElement;
-        this.messageElement = messageElement;
-        this.titleElement = titleElement;
         this.message = "";
         this.colors = colors;
         this.names = names;
@@ -96,10 +90,71 @@ class Game {
         for (let i = 0; i < this.width; i++) {
             this.board.push(column.slice(0));
         }
+        //=======================================
+        // Select Menu
+        //=======================================
+        let labelElement = document.createElement("label");
+        labelElement.for = "games";
+        labelElement.innerText = "Shall We Play a Game?";
+        this.targetElement.appendChild(labelElement);
+
+        let selectElement = document.createElement("select");
+        selectElement.id = "games";
+        selectElement.name = "games";
+        this.targetElement.appendChild(selectElement);
+
+        let optionTicTacToeOptionElement = document.createElement("option");
+        optionTicTacToeOptionElement.value = "Tic Tac Toe";
+        optionTicTacToeOptionElement.innerText = "Tic Tac Toe";
+        selectElement.appendChild(optionTicTacToeOptionElement);
+
+        let optionWarOptionElement = document.createElement("option");
+        optionWarOptionElement.value = "Connect Four";
+        optionWarOptionElement.innerText = "Connect Four";
+        selectElement.appendChild(optionWarOptionElement);
+        let optionConnectFourOptionElement = document.createElement("option");
+        optionConnectFourOptionElement.value = "Global Thermonuclear War";
+        optionConnectFourOptionElement.innerText = "Global Thermonuclear War";
+        selectElement.appendChild(optionConnectFourOptionElement);
+
+        let currentNameIdx = Array.from(selectElement).findIndex(
+            (o) => o.value == this.title
+        );
+        // selectElement.selectedIndex = currentNameIdx;
+        selectElement.addEventListener("change", init);
+
+        //=======================================
+        // Game Elements
+        //=======================================
+
+        this.headerElement = document.createElement("header");
+        this.headerElement.id = "title";
+        this.headerElement.innerText = this.title;
+        this.targetElement.appendChild(this.headerElement);
+
+        this.messageElement = document.createElement("h1");
+        this.messageElement.id = "message";
+        this.targetElement.appendChild(this.messageElement);
+
+        this.markersElement = document.createElement("section");
+        this.markersElement.id = "markers";
+        this.targetElement.appendChild(this.markersElement);
+
+        this.boardElement = document.createElement("section");
+        this.boardElement.id = "board";
+        this.targetElement.appendChild(this.boardElement);
+
+        this.resetButton = document.createElement("button");
+        this.resetButton.id = "reset_button";
+        this.resetButton.innerText = "Play Again";
+        this.targetElement.appendChild(this.resetButton);
+        this.resetButton.addEventListener("click", init);
         this.buildBoard(this.height, this.width, this.boardElement);
         this.buildMarkers(this.width, this.markersElement);
 
-        this.boardElements = boardElement.querySelectorAll("div");
+        //=======================================
+
+        this.boardElements = this.boardElement.querySelectorAll("div");
         // some properties need to be set so that the next row starts at the correct point
         // and individual elements are sized nicely
         this.setBoardColumnsStyle(
@@ -120,7 +175,25 @@ class Game {
             this.handleMarkerClick.bind(Game)
         );
     }
+    buildBoardElements(targetElement) {
+        this.headerElement = document.createElement("header");
+        this.headerElement.id = "title";
+        this.messageElement = document.createElement("h1");
+        this.messageElement.id = "messages";
+        this.markersElement = document.createElement("section");
+        this.markersElement.id = "markers";
+        this.boardElement = document.createElement("section");
+        this.markersElement.id = "board";
+        this.resetButton = document.createElement("button");
+        this.resetButton.id = "reset_button";
+        this.resetButton.innerText = "Play Again";
 
+        targetElement.appendChild(this.headerElement);
+        targetElement.appendChild(this.messageElement);
+        targetElement.appendChild(this.markersElement);
+        targetElement.appendChild(this.boardElement);
+        targetElement.appendChild(this.resetButton);
+    }
     render() {
         this.renderBoard();
         this.renderMessages();
@@ -148,7 +221,7 @@ class Game {
     }
 
     renderTitle() {
-        titleElement.innerText = this.title;
+        // this.titleElement.innerText = this.title;
     }
 
     buildMarkers(width, markerEl) {
@@ -179,7 +252,7 @@ class Game {
         this.boardElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
         this.boardElement.style.gridTemplateRows = `repeat(${width},${size}vmin)`;
         this.markersElement.style.gridTemplateColumns = `repeat(${width},${size}vmin)`;
-        markersElement
+        this.markersElement
             .querySelectorAll("div")
             .forEach((e) => (e.style.borderWidth = markersBorderWidth));
     }
@@ -200,14 +273,7 @@ class Game {
     // update used bind to ensure non anon functions can be used as event listeners AND deleted  named
     // event listeners in reset() and yet the issue remains
     reset() {
-        this.clearBoardandMarkers();
-        this.play(this.sounds.resetSound);
-        this.boardElement.removeEventListener("click", this.handleMarkerClick);
-        this.markersElement.removeEventListener(
-            "click",
-            this.handleMarkerClick
-        );
-        this.winner = 0;
+        this.targetElement.innerHTML = "";
     }
 
     //------------------------------------------------------------//
@@ -318,58 +384,24 @@ class Game {
 }
 
 class ConnectFour extends Game {
-    constructor(
-        boardElement,
-        markersElement,
-        messageElement,
-        titleElement,
-        colors
-    ) {
+    constructor(targetElement, colors) {
         let width = 7;
         let height = 6;
         let title = "Connect Four";
         let matchesToWin = 4;
         let names = colors;
-        super(
-            boardElement,
-            markersElement,
-            messageElement,
-            titleElement,
-            colors,
-            title,
-            width,
-            height,
-            matchesToWin,
-            names
-        );
+        super(targetElement, colors, title, width, height, matchesToWin, names);
     }
 }
 
 class TicTacToe extends Game {
-    constructor(
-        boardElement,
-        markersElement,
-        messageElement,
-        titleElement,
-        colors
-    ) {
+    constructor(targetElement, colors) {
         let width = 3;
         let height = 3;
         let title = "Tic Tac Toe";
         let matchesToWin = 3;
         let names = ["X", "O"];
-        super(
-            boardElement,
-            markersElement,
-            messageElement,
-            titleElement,
-            colors,
-            title,
-            width,
-            height,
-            matchesToWin,
-            names
-        );
+        super(targetElement, colors, title, width, height, matchesToWin, names);
         this.boardElements.forEach((el) => (el.style.borderRadius = "0%"));
     }
     insert(col, row, n) {
@@ -392,39 +424,20 @@ function repeat(x, times) {
     for (let i = 0; i < times; i++) res.push(x);
     return res;
 }
-function removeEventListeners(e) {
-    e.parentNode.replaceChild(e.cloneNode(1), e);
-}
+
+let body = document.querySelector("body");
+let game = new TicTacToe(body, ["red", "DodgerBlue"]);
+let gamesSelector = document.querySelector("select");
+
 function init() {
-    if (gamesSelection.value === "TicTacToe")
-        game = new TicTacToe(
-            boardEl,
-            markersElement,
-            messageElement,
-            titleElement,
-            ["red", "DodgerBlue"]
-        );
-    else if (gamesSelection.value === "Connect Four")
-        game = new ConnectFour(
-            boardEl,
-            markersElement,
-            messageElement,
-            titleElement,
-            ["purple", "gold"]
-        );
-    else {
+    if (gamesSelection === "Tic Tac Toe") {
+        game = new TicTacToe(body, ["red", "DodgerBlue"]);
+    } else if (gamesSelection === "Connect Four") {
+        game = new ConnectFour(body, ["purple", "gold"]);
+    } else {
         document.querySelector("header").innerText = "YOU LOST";
         messageElement.innerText =
             "Strange game, the only way to win is not to play.";
         messageElement.style.color = "red";
     }
 }
-
-function reset() {
-    game.reset();
-    init();
-}
-
-init();
-document.getElementById("reset_button").addEventListener("click", reset);
-gamesSelection.addEventListener("change", reset);
