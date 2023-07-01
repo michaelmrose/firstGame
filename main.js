@@ -392,6 +392,12 @@ function init() {
             titleElement,
             ["purple", "gold"]
         );
+    else {
+        document.querySelector("header").innerText = "YOU LOST";
+        messageElement.innerText =
+            "Strange game, the only way to win is not to play.";
+        messageElement.style.color = "red";
+    }
 }
 
 function reset() {
