@@ -111,13 +111,14 @@ class Game {
         this.winner = null;
         this.message = `${this.currentPlayer.name.toUpperCase()}'s TURN `;
         this.render();
-        // this is bound to window inside of event handlers thus using arrows
-        this.markersElement.addEventListener("click", (evt) => {
-            this.handleMarkerClick(evt);
-        });
-        this.boardElement.addEventListener("click", (evt) => {
-            this.handleMarkerClick(evt);
-        });
+        this.markersElement.addEventListener(
+            "click",
+            this.handleMarkerClick.bind(Game)
+        );
+        this.boardElement.addEventListener(
+            "click",
+            this.handleMarkerClick.bind(Game)
+        );
     }
 
     render() {
@@ -187,15 +188,25 @@ class Game {
         this.boardElement.innerHTML = "";
         this.markersElement.innerHTML = "";
     }
+
+    // ===================================================================
     // TODO winner is set to null because it appears that anon arrow functions added
     // by the game class as event listeners to enable their usage of "this" do not get removed when game
     // is bound to a new game object. Instead they become immortal vampires keeping the old game object
     // in memory and allowing it to call a renderElement member that ought to be dead and muck up a different
     // game. Setting winner to 0 means these undead renderElements are never called as this value is tested
     // this is a hacky workaround but it works for now.
+    // ===================================================================
+    // update used bind to ensure non anon functions can be used as event listeners AND deleted  named
+    // event listeners in reset() and yet the issue remains
     reset() {
         this.clearBoardandMarkers();
         this.play(this.sounds.resetSound);
+        this.boardElement.removeEventListener("click", this.handleMarkerClick);
+        this.markersElement.removeEventListener(
+            "click",
+            this.handleMarkerClick
+        );
         this.winner = 0;
     }
 
