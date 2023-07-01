@@ -109,7 +109,7 @@ class Game {
         );
         this.currentPlayer = this.players[0];
         this.winner = null;
-        this.message = `${this.currentPlayer.color.toUpperCase()}'s TURN `;
+        this.message = `${this.currentPlayer.name.toUpperCase()}'s TURN `;
         this.render();
         // this is bound to window inside of event handlers thus using arrows
         this.markersElement.addEventListener("click", (evt) => {
@@ -269,7 +269,7 @@ class Game {
         if (this.currentPlayer === this.players[0])
             this.currentPlayer = this.players[1];
         else this.currentPlayer = this.players[0];
-        this.message = `${this.currentPlayer.color.toUpperCase()}'s TURN `;
+        this.message = `${this.currentPlayer.name.toUpperCase()}'s TURN `;
     }
     tieGame() {
         this.message = "TIE: NOBODY WINS";
@@ -278,7 +278,7 @@ class Game {
     }
     endGame() {
         this.winner = this.currentPlayer;
-        this.message = `${this.currentPlayer.color.toUpperCase()} WINS`;
+        this.message = `${this.currentPlayer.name.toUpperCase()} WINS`;
         this.play(this.sounds.winSound);
     }
     isBoardFull() {
