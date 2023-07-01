@@ -126,12 +126,17 @@ class Game {
         this.renderTitle();
     }
 
+    renderElement(el, v) {
+        el.style.backgroundColor = this.valueToColor(v);
+    }
+
     renderBoard() {
         this.board.forEach((colArr, colIdx) => {
             colArr.forEach((el, idx) => {
-                document.getElementById(
-                    `c${colIdx}r${idx}`
-                ).style.backgroundColor = this.valueToColor(el);
+                this.renderElement(
+                    document.getElementById(`c${colIdx}r${idx}`),
+                    el
+                );
             });
         });
     }
@@ -357,6 +362,12 @@ class TicTacToe extends Game {
             return latestInsertion;
         } else return false;
     }
+    renderElement(el, v) {
+        let img;
+        if (v === 1) img = "url(x.png)";
+        else if (v === 2) img = "url(o.png)";
+        el.style.backgroundImage = img;
+    }
 }
 function repeat(x, times) {
     let res = [];
@@ -371,7 +382,7 @@ function init() {
             markersElement,
             messageElement,
             titleElement,
-            ["black", "red"]
+            ["red", "DodgerBlue"]
         );
     else if (gamesSelection.value === "Connect Four")
         game = new ConnectFour(
