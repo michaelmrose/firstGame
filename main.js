@@ -65,7 +65,8 @@ class Game {
         title,
         width,
         height,
-        matchesToWin
+        matchesToWin,
+        names
     ) {
         this.title = title;
         this.width = width;
@@ -78,9 +79,10 @@ class Game {
         this.titleElement = titleElement;
         this.message = "";
         this.colors = colors;
+        this.names = names;
         this.players = [
-            { name: "player-one", color: this.colors[0], boardValue: 1 },
-            { name: "player-two", color: this.colors[1], boardValue: 2 },
+            { name: names[0], color: this.colors[0], boardValue: 1 },
+            { name: names[1], color: this.colors[1], boardValue: 2 },
         ];
         this.sounds = {
             winSound: "win.mp3",
@@ -302,6 +304,7 @@ class ConnectFour extends Game {
         let height = 6;
         let title = "Connect Four";
         let matchesToWin = 4;
+        let names = colors;
         super(
             boardElement,
             markersElement,
@@ -311,7 +314,8 @@ class ConnectFour extends Game {
             title,
             width,
             height,
-            matchesToWin
+            matchesToWin,
+            names
         );
     }
 }
@@ -328,6 +332,7 @@ class TicTacToe extends Game {
         let height = 3;
         let title = "Tic Tac Toe";
         let matchesToWin = 3;
+        let names = ["Xs", "Os"];
         super(
             boardElement,
             markersElement,
@@ -337,7 +342,8 @@ class TicTacToe extends Game {
             title,
             width,
             height,
-            matchesToWin
+            matchesToWin,
+            names
         );
     }
     insert(col, row, n) {
@@ -362,7 +368,7 @@ function init() {
             markersElement,
             messageElement,
             titleElement,
-            ["purple", "red"]
+            ["black", "red"]
         );
     else if (gamesSelection.value === "Connect Four")
         game = new ConnectFour(
@@ -370,7 +376,7 @@ function init() {
             markersElement,
             messageElement,
             titleElement,
-            ["purple", "red"]
+            ["purple", "gold"]
         );
 }
 
